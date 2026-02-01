@@ -39,41 +39,38 @@ async function runTest() {
   try {
     fs.writeFileSync(testFilePath, 'Hello Terabox! This is a test file.');
 
-    console.log('\n--- Testing createDirectory ---');
+    console.log('--- Testing createDirectory ---');
     const createDirRes = await uploader.createDirectory(testDirPath);
-    console.log('Result:', JSON.stringify(createDirRes, null, 2));
+    console.log('Result:', createDirRes.success ? 'Success' : 'Failed');
 
-    console.log('\n--- Testing uploadFile ---');
-    const uploadRes = await uploader.uploadFile(testFilePath, (loaded, total) => {
-      console.log(`Upload progress: ${Math.round((loaded / total) * 100)}%`);
-    }, testDirPath);
-    console.log('Result:', JSON.stringify(uploadRes, null, 2));
+    console.log('--- Testing uploadFile ---');
+    const uploadRes = await uploader.uploadFile(testFilePath, null, testDirPath);
+    console.log('Result:', uploadRes.success ? 'Success' : 'Failed');
 
     if (uploadRes.success) {
       const fsId = uploadRes.fileDetails.fs_id;
       const remotePath = uploadRes.fileDetails.path || `${testDirPath}/${testFileName}`;
 
-      console.log('\n--- Testing fetchFileList ---');
+      console.log('--- Testing fetchFileList ---');
       const listRes = await uploader.fetchFileList(testDirPath);
-      console.log('Result:', JSON.stringify(listRes, null, 2));
+      console.log('Result:', listRes.success ? 'Success' : 'Failed');
 
-      console.log('\n--- Testing downloadFile ---');
+      console.log('--- Testing downloadFile ---');
       const downloadRes = await uploader.downloadFile(fsId);
-      console.log('Result:', JSON.stringify(downloadRes, null, 2));
+      console.log('Result:', downloadRes.success ? 'Success' : 'Failed');
 
-      console.log('\n--- Testing generateShortUrl ---');
+      console.log('--- Testing generateShortUrl ---');
       const shortUrlRes = await uploader.generateShortUrl(remotePath, fsId);
-      console.log('Result:', JSON.stringify(shortUrlRes, null, 2));
+      console.log('Result:', shortUrlRes.success ? 'Success' : 'Failed');
 
-      console.log('\n--- Testing moveFiles ---');
-      const newFileName = 'moved_test_file.txt';
-      const moveRes = await uploader.moveFiles(remotePath, testDirPath, newFileName);
-      console.log('Result:', JSON.stringify(moveRes, null, 2));
+      console.log('--- Testing moveFiles ---');
+      const moveRes = await uploader.moveFiles(remotePath, testDirPath, 'moved_test_file.txt');
+      console.log('Result:', moveRes.errno === 0 ? 'Success' : 'Failed');
     }
 
-    console.log('\n--- Final Cleanup skipped per user request. Files remain in:', testDirPath);
+    console.log('--- Final Cleanup skipped. Files remain in:', testDirPath);
   } catch (error) {
-    console.error('Test failed:', error);
+    console.error('Test failed:', error.message);
   } finally {
     if (fs.existsSync(testFilePath)) fs.unlinkSync(testFilePath);
   }
