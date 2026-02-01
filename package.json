@@ -1,6 +1,6 @@
 {
   "name": "terabox-upload-tool",
-  "version": "1.3.1",
+  "version": "1.4.1",
   "description": "A robust library designed for seamless integration with TeraBox, the leading cloud storage service offering 1 TB of free space. Effortlessly upload files, download files, delete files, manage directories, and retrieve file lists. Ideal for developers seeking efficient cloud storage solutions within their Node.js projects.",
   "repository": {
     "type": "git",
